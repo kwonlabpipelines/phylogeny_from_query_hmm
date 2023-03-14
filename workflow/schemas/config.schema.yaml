@@ -28,6 +28,3 @@ properties:
         num_parsimony_trees:
           type: number
           description: how many parsimony trees to start the search
-        num_bootstraps:
-          type: number
-          description: how many bootstraps to perform

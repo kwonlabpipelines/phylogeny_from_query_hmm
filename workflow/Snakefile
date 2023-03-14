@@ -1,12 +1,14 @@
 import csv
 import os
 
+configfile: "config/config.yaml"
+print(config['alignment_params'])
 genome_file_map = {}
 with open(config["genome_paths"], "r") as f:
         reader = csv.DictReader(f)
         parsed_list = [row for row in reader]
         for row in parsed_list:
-            genome_file_map[row["taxon"]] = row["genome_file"]
+            genome_file_map[row["genome_id"]] = row["genome_path"]
 
 ALL_GENOMES = list(genome_file_map.keys())
 
@@ -27,7 +29,7 @@ localrules: target, rename_fasta
 
 rule target:
     input:
-        "temp/03.phylo_tree/fgt_type_strains.tre"
+        "output/allgenomes.tre"
 
 rule gunzip_file:
     input:
@@ -75,7 +77,7 @@ rule make_concatenated_orf_file:
 rule hmmsearch:
     input:
         concatenated_orfs = "temp/03.phylo_tree/allgenomes_concatenated_orf.aa.fasta",
-        hmmfile = "input/ribo_prots.hmm"
+        hmmfile = config["hmms_to_align"]
     output:
         text = "temp/03.phylo_tree/hmmer_out/allgenomes_hmmer_result.txt",
         table = "temp/03.phylo_tree/hmmer_out/allgenomes_hmmer_result.tbl",
@@ -95,8 +97,10 @@ rule concatenate_alignment:
         "temp/03.phylo_tree/allgenomes.ribo.mafft.concat.fasta"
     conda:
         "envs/biopython.yaml"
+    params:
+        missing = config['alignment_params']['filter_proportion_missing']
     shell:
-        "python scripts/make_phylo_tree/concatenate_alignment.py -m {config.alignment_params.filter_proportion_missing} -s {input.singletons} -o {output}"
+        "python scripts/make_phylo_tree/concatenate_alignment.py -m {params.missing} -s {input.singletons} -o {output}"
 
 rule align_prots:
     input:
@@ -133,14 +137,18 @@ rule run_raxmlng:
     input:
         "temp/03.phylo_tree/allgenomes.ribo.mafft.concat.fasta"
     output:
-        "temp/03.phylo_tree/allgenomes.tre"
+        "output/allgenomes.tre"
     conda:
         "envs/raxmlng.yaml"
     threads:
         16
+    params:
+        model = config['tree_params']['model'],
+        num_pars = config['tree_params']['num_parsimony_trees'],
+        outgroup = config['tree_params']['outgroup']
     shell:
         """
-        raxml-ng --all --msa {input} --force perf_threads --model {config.tree_params.model} --tree pars{{{config.tree_params.num_parsimony_trees}}} --bs-trees {config.tree_params.num_bootstraps} --outgroup {config.tree_params.outgroup} --threads {threads}
+        raxml-ng --all --msa {input} --force perf_threads --model {params.model} --tree pars{{{params.num_pars}}} --outgroup {params.outgroup} --threads {threads}
         """
 
 
