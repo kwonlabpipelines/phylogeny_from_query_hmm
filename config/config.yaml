@@ -1,0 +1,9 @@
+genome_paths: "config/genome_paths.csv"
+hmms_to_align: "test_data/ribo_prots.hmm"
+alignment_params:
+  filter_proportion_missing: 0.1
+tree_params:
+  outgroup: "Escherichia coli"
+  model: "GTR+G"
+  num_parsimony_trees: 10
+  num_bootstraps: 10

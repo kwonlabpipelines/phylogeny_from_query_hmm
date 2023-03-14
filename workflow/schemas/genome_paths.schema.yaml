@@ -1,0 +1,14 @@
+$schema: "http://json-schema.org/draft-04/schema#"
+description: genome_paths map a genome_id to a path to a fasta file
+type: object
+properties:
+  genome_id:
+    type: string
+    pattern: "^[a-zA-Z_0-9-\.]+$"
+    description: genome_id name/id (alphanumeric string, that may additionally contain '_', '-', and '.')
+  genome_path:
+    type: string
+    description: path to FASTA file, optionally gzipped
+required:
+  - genome_id
+  - genome_path

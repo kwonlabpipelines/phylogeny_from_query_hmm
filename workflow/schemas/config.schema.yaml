@@ -1,0 +1,33 @@
+$schema: "http://json-schema.org/draft-04/schema#"
+
+description: snakemake configuration file
+
+type: object
+
+properties:
+  genome_paths:
+    type: string
+  hmms_to_align:
+    type: string
+    description: path to .hmm file containing all genes you want in the tree concatenated
+  alignment_params:
+    type: object
+      properties:
+        filter_proportion_missing:
+          type: number
+          description: a number from 0-1. any site with >filter_proportion_missing gaps will be removed from the alignment
+  tree_params:
+    type: object
+      properties:
+        outgroup:
+          type: string
+          description: genome_id of outgroup, or comma separated genome_ids (must be monophyletic)
+        model:
+          type: string
+          description: https://github.com/amkozlov/raxml-ng/wiki/Input-data#evolutionary-model
+        num_parsimony_trees:
+          type: number
+          description: how many parsimony trees to start the search
+        num_bootstraps:
+          type: number
+          description: how many bootstraps to perform

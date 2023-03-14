@@ -1,0 +1,49 @@
+genome_id,genome_path,population
+Vibrio_tasmaniensis_1,test_data/10N.222.45.E7_contigs.fa.gz,Vibrio tasmaniensis
+Vibrio_tasmaniensis_2,test_data/10N.222.45.A2_contigs.fa.gz,Vibrio tasmaniensis
+Vibrio_tasmaniensis_3,test_data/10N.222.48.A2_contigs.fa.gz,Vibrio tasmaniensis
+Vibrio_tasmaniensis_4,test_data/10N.222.48.B1_contigs.fa.gz,Vibrio tasmaniensis
+Vibrio_splendidus_1,test_data/FF500_contigs.fa.gz,Vibrio splendidus
+Vibrio_splendidus_2,test_data/5S101_contigs.fa.gz,Vibrio splendidus
+Vibrio_splendidus_3,test_data/10N.286.49.F1_contigs.fa.gz,Vibrio splendidus
+Vibrio_splendidus_4,test_data/10N.222.52.A3_contigs.fa.gz,Vibrio splendidus
+Vibrio_sp_F13_1,test_data/9ZC13_contigs.fa.gz,Vibrio sp F13
+Vibrio_sp_F13_2,test_data/10N.222.55.C6_contigs.fa.gz,Vibrio sp F13
+Vibrio_sp_F13_3,test_data/10N.261.55.E12_contigs.fa.gz,Vibrio sp F13
+Vibrio_sp_F13_4,test_data/10N.261.52.E6_contigs.fa.gz,Vibrio sp F13
+Vibrio_sp_F12_1,test_data/10N.286.51.C3_contigs.fa.gz,Vibrio sp F12
+Vibrio_sp_F12_2,test_data/10N.286.55.E10_contigs.fa.gz,Vibrio sp F12
+Vibrio_sp_F12_3,test_data/10N.286.55.C11_contigs.fa.gz,Vibrio sp F12
+Vibrio_sp_F12_4,test_data/10N.286.46.E10_contigs.fa.gz,Vibrio sp F12
+Vibrio_sp_F10_1,test_data/ZF129_contigs.fa.gz,Vibrio sp F10
+Vibrio_sp_F10_2,test_data/9ZB36_contigs.fa.gz,Vibrio sp F10
+Vibrio_sp_F10_3,test_data/9ZC157_contigs.fa.gz,Vibrio sp F10
+Vibrio_sp_F10_4,test_data/9ZD137_contigs.fa.gz,Vibrio sp F10
+Vibrio_ordalii_1,test_data/12B09_contigs.fa.gz,Vibrio ordalii
+Vibrio_ordalii_2,test_data/FS238_contigs.fa.gz,Vibrio ordalii
+Vibrio_ordalii_3,test_data/FS144_contigs.fa.gz,Vibrio ordalii
+Vibrio_ordalii_4,test_data/FF167_contigs.fa.gz,Vibrio ordalii
+Vibrio_lentus_1,test_data/ZS17_contigs.fa.gz,Vibrio lentus
+Vibrio_lentus_2,test_data/10N.261.51.F9_contigs.fa.gz,Vibrio lentus
+Vibrio_lentus_3,test_data/10N.286.52.A12_contigs.fa.gz,Vibrio lentus
+Vibrio_lentus_4,test_data/10N.261.52.C5_contigs.fa.gz,Vibrio lentus
+Vibrio_kanaloae_1,test_data/5S149_contigs.fa.gz,Vibrio kanaloae
+Vibrio_kanaloae_2,test_data/10N.286.52.B2_contigs.fa.gz,Vibrio kanaloae
+Vibrio_kanaloae_3,test_data/10N.261.46.E4_contigs.fa.gz,Vibrio kanaloae
+Vibrio_kanaloae_4,test_data/10N.222.51.B7_contigs.fa.gz,Vibrio kanaloae
+Vibrio_cyclitrophicus_1,test_data/ZF270_contigs.fa.gz,Vibrio cyclitrophicus
+Vibrio_cyclitrophicus_2,test_data/ZF14_contigs.fa.gz,Vibrio cyclitrophicus
+Vibrio_cyclitrophicus_3,test_data/1F53_contigs.fa.gz,Vibrio cyclitrophicus
+Vibrio_cyclitrophicus_4,test_data/10N.286.49.B11_contigs.fa.gz,Vibrio cyclitrophicus
+Vibrio_breoganii_1,test_data/ZF29_contigs.fa.gz,Vibrio breoganii
+Vibrio_breoganii_2,test_data/10N.222.51.E6_contigs.fa.gz,Vibrio breoganii
+Vibrio_breoganii_3,test_data/10N.222.51.E5_contigs.fa.gz,Vibrio breoganii
+Vibrio_breoganii_4,test_data/10N.222.52.B2_contigs.fa.gz,Vibrio breoganii
+Enterovibrio_norvegicus_1,test_data/1F211_contigs.fa.gz,Enterovibrio norvegicus
+Enterovibrio_norvegicus_2,test_data/10N.261.45.A10_contigs.fa.gz,Enterovibrio norvegicus
+Enterovibrio_norvegicus_3,test_data/10N.261.45.B2_contigs.fa.gz,Enterovibrio norvegicus
+Enterovibrio_norvegicus_4,test_data/10N.261.49.F5_contigs.fa.gz,Enterovibrio norvegicus
+Aliivibrio_fischeri_1,test_data/5F97_contigs.fa.gz,Aliivibrio fischeri
+Aliivibrio_fischeri_2,test_data/ZF25_contigs.fa.gz,Aliivibrio fischeri
+Aliivibrio_fischeri_3,test_data/5F146_contigs.fa.gz,Aliivibrio fischeri
+Aliivibrio_fischeri_4,test_data/5F33_contigs.fa.gz,Aliivibrio fischeri
