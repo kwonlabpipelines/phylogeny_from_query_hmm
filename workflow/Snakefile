@@ -68,18 +68,18 @@ rule make_concatenated_orf_file:
     input:
         expand("temp/02.cds/{genome}_cds_prod.f{{type}}", genome=ALL_GENOMES)
     output:
-        "temp/03.phylo_tree/reference_concatenated_orf.{type}.fasta"
+        "temp/03.phylo_tree/allgenomes_concatenated_orf.{type}.fasta"
     shell:
         "cat {input} > {output}"
 
 rule hmmsearch:
     input:
-        concatenated_orfs = "temp/03.phylo_tree/reference_concatenated_orf.aa.fasta",
+        concatenated_orfs = "temp/03.phylo_tree/allgenomes_concatenated_orf.aa.fasta",
         hmmfile = "input/ribo_prots.hmm"
     output:
-        text = "temp/03.phylo_tree/hmmer_out/reference_hmmer_result.txt",
-        table = "temp/03.phylo_tree/hmmer_out/reference_hmmer_result.tbl",
-        domains = "temp/03.phylo_tree/hmmer_out/reference_hmmer_result.dom.tbl"
+        text = "temp/03.phylo_tree/hmmer_out/allgenomes_hmmer_result.txt",
+        table = "temp/03.phylo_tree/hmmer_out/allgenomes_hmmer_result.tbl",
+        domains = "temp/03.phylo_tree/hmmer_out/allgenomes_hmmer_result.dom.tbl"
     conda:
         "envs/hmmer.yaml"
     threads:
@@ -90,9 +90,9 @@ rule hmmsearch:
 rule concatenate_alignment:
     input:
         aligned_files = expand("temp/03.phylo_tree/ribo_aligned/{prot_name}_aligned.fasta", prot_name=ALL_PROTS),
-        singletons = "temp/03.phylo_tree/hmmer_out/reference_singletons.txt"
+        singletons = "temp/03.phylo_tree/hmmer_out/allgenomes_singletons.txt"
     output:
-        "temp/03.phylo_tree/reference.ribo.mafft.concat.fasta"
+        "temp/03.phylo_tree/allgenomes.ribo.mafft.concat.fasta"
     conda:
         "envs/biopython.yaml"
     shell:
@@ -110,8 +110,8 @@ rule align_prots:
 
 rule make_ribo_files:
     input:
-        singletons = "temp/03.phylo_tree/hmmer_out/reference_singletons.txt",
-        concatenated_orfs = "temp/03.phylo_tree/reference_concatenated_orf.aa.fasta"
+        singletons = "temp/03.phylo_tree/hmmer_out/allgenomes_singletons.txt",
+        concatenated_orfs = "temp/03.phylo_tree/allgenomes_concatenated_orf.aa.fasta"
     output:
         "temp/03.phylo_tree/ribo_unaligned/dummy_file.txt"
     conda:
@@ -121,9 +121,9 @@ rule make_ribo_files:
 
 rule filter_hmm_results:
     input:
-        "temp/03.phylo_tree/hmmer_out/reference_hmmer_result.tbl"
+        "temp/03.phylo_tree/hmmer_out/allgenomes_hmmer_result.tbl"
     output:
-        "temp/03.phylo_tree/hmmer_out/reference_singletons.txt"
+        "temp/03.phylo_tree/hmmer_out/allgenomes_singletons.txt"
     conda:
         "envs/biopython.yaml"
     shell:
@@ -131,9 +131,9 @@ rule filter_hmm_results:
 
 rule run_raxmlng:
     input:
-        "temp/03.phylo_tree/reference.ribo.mafft.concat.fasta"
+        "temp/03.phylo_tree/allgenomes.ribo.mafft.concat.fasta"
     output:
-        "temp/03.phylo_tree/fgt_type_strains.tre"
+        "temp/03.phylo_tree/allgenomes.tre"
     conda:
         "envs/raxmlng.yaml"
     threads:
