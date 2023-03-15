@@ -3,7 +3,7 @@ from Bio import SeqIO
 
 new_recs = []
 with open(snakemake.input[0], "r") as f:
-    species = os.path.splitext(os.path.basename(snakemake.input[0]))[0]
+    species = snakemake.wildcards.genome
     recs = list(SeqIO.parse(f, "fasta"))
     for i,rec in enumerate(recs):
         rec.id = "{}_{:03d}".format(species, i)

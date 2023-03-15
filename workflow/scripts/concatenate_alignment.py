@@ -31,7 +31,7 @@ def main():
     args = parser.parse_args()
 
     singletons = get_prots_and_strains(args.singletons)
-    filelist = [os.path.join("temp/03.phylo_tree/ribo_aligned/", "{}_aligned.fasta".format(prot)) for prot in singletons]
+    filelist = [os.path.join("output/03.phylo_tree/ribo_aligned/", "{}_aligned.fasta".format(prot)) for prot in singletons]
     min_frac = float(args.min_frac)
     out_name = args.out_name
     sequence_dict = defaultdict(str)
@@ -66,24 +66,7 @@ def main():
     columns_to_filter = []
 
     aln = AlignIO.read(out_name, 'fasta')
-    for x in range(0, len(aln[0])):
-        col = aln[ : , x]
-        if col.count('-') >= min_frac * len(col):
-            columns_to_filter.append(x)
-    if len(columns_to_filter) > 0:
-        new_align = aln[:, 0 : 0]
-
-        for i, col in enumerate(sorted(columns_to_filter)):
-            if i == 0:
-                begin = 0
-                new_align += aln[:, begin : col]
-            elif i != len(columns_to_filter) - 1:
-                begin = columns_to_filter[i - 1] + 1
-                new_align += aln[:, begin : col]
-            else:
-                new_align += aln[:, col + 1 : ]
-    else:
-        new_align = aln
+    new_align = aln
         
     AlignIO.write(new_align, out_name, 'fasta')
     

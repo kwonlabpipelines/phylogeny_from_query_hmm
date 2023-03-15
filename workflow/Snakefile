@@ -2,7 +2,6 @@ import csv
 import os
 
 configfile: "config/config.yaml"
-print(config['alignment_params'])
 genome_file_map = {}
 with open(config["genome_paths"], "r") as f:
         reader = csv.DictReader(f)
@@ -27,21 +26,30 @@ ALL_PROTS = get_prots()
 
 localrules: target, rename_fasta
 
+def get_target_files(wildcards):
+    target_files = []
+    if config['make_raxmltree']:
+        target_files.append(f"output/03.phylo_tree/{config['tree_prefix']}.msa.raxml.bestTree")
+    if config['make_fasttree']:
+        target_files.append(f"output/03.phylo_tree/{config['tree_prefix']}.msa.fasttree")
+    return target_files
+
 rule target:
     input:
-        "output/allgenomes.tre"
+        get_target_files
+
 
 rule gunzip_file:
     input:
         unpack(get_genome_file)
     output:
-        temp("temp/00.unzip/{genome}.fna")
+        temp("output/00.unzip/{genome}.fna")
     shell:
         "gunzip -c {input} > {output}"
 
 def check_if_gzipped(wildcards):
-    if os.path.splitext(genome_file_map[wildcards.genome]) == ".gz":
-        return "temp/00.unzip/{}.fna".format(wildcards.genome)
+    if os.path.splitext(genome_file_map[wildcards.genome])[1] == ".gz":
+        return "output/00.unzip/{}.fna".format(wildcards.genome)
     else:
         return genome_file_map[wildcards.genome]
 
@@ -49,7 +57,7 @@ rule rename_fasta:
     input:
         check_if_gzipped
     output:
-        temp("temp/01.rename/{genome}.fna")
+        "output/01.rename/{genome}.fna"
     conda:
         "envs/biopython.yaml"
     script:
@@ -57,10 +65,10 @@ rule rename_fasta:
 
 rule run_prodigal:
     input:
-        genome = "temp/01.rename/{genome}.fna"
+        genome = "output/01.rename/{genome}.fna"
     output:
-        amino_acid = "temp/02.cds/{genome}_cds_prod.faa",
-        nucleotide = "temp/02.cds/{genome}_cds_prod.fna"
+        amino_acid = "output/02.cds/{genome}_cds_prod.faa",
+        nucleotide = "output/02.cds/{genome}_cds_prod.fna"
     conda:
         "envs/prodigal.yaml"
     shell:
@@ -68,20 +76,20 @@ rule run_prodigal:
 
 rule make_concatenated_orf_file:
     input:
-        expand("temp/02.cds/{genome}_cds_prod.f{{type}}", genome=ALL_GENOMES)
+        expand("output/02.cds/{genome}_cds_prod.f{{type}}", genome=ALL_GENOMES)
     output:
-        "temp/03.phylo_tree/allgenomes_concatenated_orf.{type}.fasta"
+        f"output/03.phylo_tree/{config['tree_prefix']}_concatenated_orf.{{type}}.fasta"
     shell:
         "cat {input} > {output}"
 
 rule hmmsearch:
     input:
-        concatenated_orfs = "temp/03.phylo_tree/allgenomes_concatenated_orf.aa.fasta",
+        concatenated_orfs = f"output/03.phylo_tree/{config['tree_prefix']}_concatenated_orf.aa.fasta",
         hmmfile = config["hmms_to_align"]
     output:
-        text = "temp/03.phylo_tree/hmmer_out/allgenomes_hmmer_result.txt",
-        table = "temp/03.phylo_tree/hmmer_out/allgenomes_hmmer_result.tbl",
-        domains = "temp/03.phylo_tree/hmmer_out/allgenomes_hmmer_result.dom.tbl"
+        text = f"output/03.phylo_tree/hmmer_out/{config['tree_prefix']}_hmmer_result.txt",
+        table = f"output/03.phylo_tree/hmmer_out/{config['tree_prefix']}_hmmer_result.tbl",
+        domains = f"output/03.phylo_tree/hmmer_out/{config['tree_prefix']}_hmmer_result.dom.tbl"
     conda:
         "envs/hmmer.yaml"
     threads:
@@ -91,64 +99,76 @@ rule hmmsearch:
 
 rule concatenate_alignment:
     input:
-        aligned_files = expand("temp/03.phylo_tree/ribo_aligned/{prot_name}_aligned.fasta", prot_name=ALL_PROTS),
-        singletons = "temp/03.phylo_tree/hmmer_out/allgenomes_singletons.txt"
+        aligned_files = expand("output/03.phylo_tree/ribo_aligned/{prot_name}_aligned.fasta", prot_name=ALL_PROTS),
+        singletons = f"output/03.phylo_tree/hmmer_out/{config['tree_prefix']}_singletons.txt"
     output:
-        "temp/03.phylo_tree/allgenomes.ribo.mafft.concat.fasta"
+        f"output/03.phylo_tree/{config['tree_prefix']}.msa"
     conda:
         "envs/biopython.yaml"
     params:
         missing = config['alignment_params']['filter_proportion_missing']
     shell:
-        "python scripts/make_phylo_tree/concatenate_alignment.py -m {params.missing} -s {input.singletons} -o {output}"
+        "python workflow/scripts/concatenate_alignment.py -m {params.missing} -s {input.singletons} -o {output}"
 
 rule align_prots:
     input:
-        "temp/03.phylo_tree/ribo_unaligned/dummy_file.txt"
+        "output/03.phylo_tree/ribo_unaligned/dummy_file.txt"
     output:
-        "temp/03.phylo_tree/ribo_aligned/{prot_name}_aligned.fasta"
+        "output/03.phylo_tree/ribo_aligned/{prot_name}_aligned.fasta"
     conda:
         "envs/mafft.yaml"
     shell:
-        "mafft-linsi temp/03.phylo_tree/ribo_unaligned/{wildcards.prot_name}_unaligned.fasta > {output}"
+        "mafft-linsi output/03.phylo_tree/ribo_unaligned/{wildcards.prot_name}_unaligned.fasta > {output}"
 
 rule make_ribo_files:
     input:
-        singletons = "temp/03.phylo_tree/hmmer_out/allgenomes_singletons.txt",
-        concatenated_orfs = "temp/03.phylo_tree/allgenomes_concatenated_orf.aa.fasta"
+        singletons = f"output/03.phylo_tree/hmmer_out/{config['tree_prefix']}_singletons.txt",
+        concatenated_orfs = f"output/03.phylo_tree/{config['tree_prefix']}_concatenated_orf.na.fasta"
     output:
-        "temp/03.phylo_tree/ribo_unaligned/dummy_file.txt"
+        "output/03.phylo_tree/ribo_unaligned/dummy_file.txt"
     conda:
         "envs/biopython.yaml"
     shell:
-        "python scripts/make_phylo_tree/make_ribo_files.py -m {input[singletons]} -c {input[concatenated_orfs]} -o temp/03.phylo_tree/ribo_unaligned/ -d {output} "
+        "python workflow/scripts/make_ribo_files.py -m {input[singletons]} -c {input[concatenated_orfs]} -o output/03.phylo_tree/ribo_unaligned/ -d {output} "
 
 rule filter_hmm_results:
     input:
-        "temp/03.phylo_tree/hmmer_out/allgenomes_hmmer_result.tbl"
+        f"output/03.phylo_tree/hmmer_out/{config['tree_prefix']}_hmmer_result.tbl"
     output:
-        "temp/03.phylo_tree/hmmer_out/allgenomes_singletons.txt"
+        f"output/03.phylo_tree/hmmer_out/{config['tree_prefix']}_singletons.txt"
     conda:
         "envs/biopython.yaml"
     shell:
-        "python scripts/make_phylo_tree/check_hmmsearch.py -i {input} -s {output}"
+        "python workflow/scripts/check_hmmsearch.py -i {input} -s {output}"
 
 rule run_raxmlng:
     input:
-        "temp/03.phylo_tree/allgenomes.ribo.mafft.concat.fasta"
+        f"output/03.phylo_tree/{config['tree_prefix']}.msa"
     output:
-        "output/allgenomes.tre"
+        f"output/03.phylo_tree/{config['tree_prefix']}.msa.raxml.bestTree"
     conda:
         "envs/raxmlng.yaml"
     threads:
         16
     params:
-        model = config['tree_params']['model'],
-        num_pars = config['tree_params']['num_parsimony_trees'],
-        outgroup = config['tree_params']['outgroup']
+        model = config['raxml_tree_params']['model'],
+        num_pars = config['raxml_tree_params']['num_parsimony_trees'],
+        outgroup = config['raxml_tree_params']['outgroup']
     shell:
         """
-        raxml-ng --all --msa {input} --force perf_threads --model {params.model} --tree pars{{{params.num_pars}}} --outgroup {params.outgroup} --threads {threads}
+        raxml-ng --search1 --msa {input} --model {params.model} --outgroup {params.outgroup} --threads auto{threads}
         """
 
-
+rule run_fasttree:
+    input:
+        f"output/03.phylo_tree/{config['tree_prefix']}.msa"
+    output:
+        f"output/03.phylo_tree/{config['tree_prefix']}.msa.fasttree"
+    conda:
+        "envs/fasttree.yaml"
+    threads:
+        8
+    shell:
+        """
+        fasttree -gtr -gamma -nt {input} > {output} 
+        """

@@ -1,8 +1,11 @@
 genome_paths: "config/genome_paths.csv"
-hmms_to_align: "test_data/ribo_prots.hmm"
+hmms_to_align: "test_data/cpn60_plus_ribo_proteins.hmm"
+tree_prefix: "test_genomes"
+make_raxmltree: False
+make_fasttree: True
 alignment_params:
   filter_proportion_missing: 0.1
-tree_params:
+raxml_tree_params:
   outgroup: "Escherichia_coli"
   model: "GTR+G"
-  num_parsimony_trees: 10
+  num_parsimony_trees: 2

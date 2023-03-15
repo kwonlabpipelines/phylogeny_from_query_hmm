@@ -37,7 +37,7 @@ def main():
             strain = '_'.join(s.id.split('_')[0:-2])
             s.id = strain
             final_seqlist.append(s)
-        if len(final_seqlist) > 0.3 * num_strains or "Cpn60" in prot:
+        if len(final_seqlist) > 0.3 * num_strains or "Cpn60" in prot or "GroEL" in prot:
             SeqIO.write(final_seqlist, outname, 'fasta')
     os.system('touch ' + dummy_file)
 
