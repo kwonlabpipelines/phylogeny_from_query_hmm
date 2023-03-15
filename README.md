@@ -4,4 +4,4 @@
 
 To use this pipeline, have snakemake, snakedeploy installed, then run:
 
-snakedeploy deploy-workflow https://github.com/kwonlabpipelines/phylogeny_from_query_hmm <target_folder>
+snakedeploy deploy-workflow https://github.com/kwonlabpipelines/phylogeny_from_query_hmm <target_folder> --tag v0.1
