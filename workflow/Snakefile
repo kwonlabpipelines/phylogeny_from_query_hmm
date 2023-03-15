@@ -152,7 +152,6 @@ rule run_raxmlng:
         16
     params:
         model = config['raxml_tree_params']['model'],
-        num_pars = config['raxml_tree_params']['num_parsimony_trees'],
         outgroup = config['raxml_tree_params']['outgroup']
     shell:
         """
